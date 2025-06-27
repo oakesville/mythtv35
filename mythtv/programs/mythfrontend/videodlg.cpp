@@ -162,7 +162,7 @@ namespace
         if (sgroup == "Banners")
             suffix = "banner";
 
-        for (const auto & itype : std::as_const(image_types))
+        for (const auto & itype : qAsConst(image_types)) // dho
             image_exts.insert(QString(itype).toLower());
 
         if (!host.isEmpty())
@@ -201,7 +201,7 @@ namespace
                                 ext);
                 }
 
-                for (const auto & str : std::as_const(sfn))
+                for (const auto & str : qAsConst(sfn)) // dho
                 {
                     if (hostFiles.contains(str))
                     {
@@ -214,7 +214,7 @@ namespace
 
         const QString fntm("%1/%2.%3");
 
-        for (const auto & dir : std::as_const(search_dirs))
+        for (const auto & dir : qAsConst(search_dirs)) // dho
         {
             if (dir.isEmpty()) continue;
 
@@ -251,7 +251,7 @@ namespace
                                 ext);
                 }
 
-                for (const auto & file : std::as_const(sfn))
+                for (const auto & file : qAsConst(sfn)) // dho
                 {
                     if (QFile::exists(file))
                     {
@@ -533,6 +533,13 @@ namespace
             tmp["watchedstate"] = WatchedToState(metadata->GetWatched());
 
             tmp["videolevel"] = ParentalLevelToState(metadata->GetShowLevel());
+
+            // dho
+            int filenameLen = metadata->GetFilename().length();
+            int lastSlash = metadata->GetFilename().lastIndexOf("/");
+            QString justName = metadata->GetFilename().right(filenameLen - lastSlash - 1);
+            int lastDot = justName.lastIndexOf(".");
+            dest.handleText("fulltitle", justName.left(lastDot));
         }
 
         struct helper
@@ -664,7 +671,7 @@ class ItemDetailPopup : public MythScreenType
     bool OnKeyAction(const QStringList &actions)
     {
         bool handled = false;
-        for (const auto & action : std::as_const(actions))
+        for (const auto & action : qAsConst(actions)) // dho
         {
             handled = true;
             if (action == "SELECT" || action == "PLAYBACK")
@@ -945,7 +952,7 @@ void VideoDialog::SavePosition(void)
         if (node)
             m_d->m_lastTreeNodePath = node->getRouteByString().join("\n");
     }
-    else if (m_d->m_type == DLG_BROWSER || m_d->m_type == DLG_GALLERY)
+    else if (m_d->m_type == DLG_BROWSER || m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2) // dho
     {
         MythUIButtonListItem *item = m_videoButtonList->GetItemCurrent();
         if (item)
@@ -985,6 +992,9 @@ bool VideoDialog::Create()
             break;
         case DLG_GALLERY:
             windowName = "gallery";
+            break;
+        case DLG_GALLERY2: // dho
+            windowName = "gallery2";
             break;
         case DLG_TREE:
             windowName = "tree";
@@ -1219,7 +1229,7 @@ void VideoDialog::loadData()
             {
                 QStringList lastTreeNodePath = gCoreContext->GetSetting("mythvideo.VideoTreeLastActive", "").split("\n");
 
-                if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_BROWSER)
+                if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2 || m_d->m_type == DLG_BROWSER) // dho
                 {
                     if (!lastTreeNodePath.isEmpty())
                     {
@@ -1259,7 +1269,7 @@ void VideoDialog::loadData()
         using MGTreeChildList = QList<MythGenericTree *>;
         MGTreeChildList *lchildren = m_d->m_currentNode->getAllChildren();
 
-        for (auto * child : std::as_const(*lchildren))
+        for (auto * child : qAsConst(*lchildren)) // dho
         {
             if (child != nullptr)
             {
@@ -1382,11 +1392,14 @@ void VideoDialog::fetchVideos()
 {
     m_d->m_playbackState.Initialize();
     MythGenericTree *oldroot = m_d->m_rootNode;
+
+    m_d->m_videoList->ltype = m_d->m_type; // dho
+
     if (!m_d->m_treeLoaded)
     {
         m_d->m_rootNode = m_d->m_videoList->buildVideoList(m_d->m_isFileBrowser,
                 m_d->m_isFlatList, m_d->m_groupType,
-                m_d->m_parentalLevel.GetLevel(), true);
+                m_d->m_parentalLevel.GetLevel(), false); // dho
     }
     else
     {
@@ -1435,7 +1448,7 @@ QString VideoDialog::RemoteImageCheck(const QString& host, const QString& filena
 
     if (!dirs.isEmpty())
     {
-        for (const auto & dir : std::as_const(dirs))
+        for (const auto & dir : qAsConst(dirs)) // dho
         {
             QUrl sgurl = dir;
             QString path = sgurl.path();
@@ -1519,7 +1532,7 @@ QString VideoDialog::GetCoverImage(MythGenericTree *node)
         test_files.append(filename + ".gif");
 
         // coverity[auto_causes_copy]
-        for (auto imagePath : std::as_const(test_files))
+        for (auto imagePath : qAsConst(test_files)) // dho
         {
 #if 0
             LOG(VB_GENERAL, LOG_DEBUG, QString("Cover check :%1 : ").arg(imagePath));
@@ -1566,7 +1579,7 @@ QString VideoDialog::GetCoverImage(MythGenericTree *node)
 
                 if (!dirs.isEmpty())
                 {
-                    for (const auto & dir : std::as_const(dirs))
+                    for (const auto & dir : qAsConst(dirs)) // dho
                     {
                         QUrl sgurl = dir;
                         QString path = sgurl.path();
@@ -1580,7 +1593,7 @@ QString VideoDialog::GetCoverImage(MythGenericTree *node)
 
                         if (ok)
                         {
-                            for (const auto & pattern : std::as_const(imageTypes))
+                            for (const auto & pattern : qAsConst(imageTypes)) // dho
                             {
                                 auto rePattern = QRegularExpression::wildcardToRegularExpression(pattern);
                                 QRegularExpression rx {
@@ -2177,7 +2190,7 @@ void VideoDialog::searchComplete(const QString& string)
     else
         children = m_d->m_currentNode->getAllChildren();
 
-    for (auto * child : std::as_const(*children))
+    for (auto * child : qAsConst(*children)) // dho
     {
         QString title = child->GetText();
         int id = child->getPosition();
@@ -2215,7 +2228,7 @@ void VideoDialog::searchStart(void)
     else
         children = m_d->m_currentNode->getAllChildren();
 
-    for (auto * child : std::as_const(*children))
+    for (auto * child : qAsConst(*children)) // dho
     {
         childList << child->GetText();
     }
@@ -2378,7 +2391,7 @@ void VideoDialog::UpdateText(MythUIButtonListItem *item)
 /** \fn VideoDialog::UpdateWatchedState(MythUIButtonListItem *item)
  *  \brief Update the watched state for a given ButtonListItem from the database.
  *  \return void.
- * 
+ *
  *  The player could have updated the watched state of a video after watching.
  *  We load the metadata of the current item from the database and sync the
  *  watched state of the current item if it was changed by the player.
@@ -2569,6 +2582,10 @@ MythMenu* VideoDialog::CreateViewMenu()
 
     if (!(m_d->m_type & DLG_GALLERY))
         menu->AddItem(tr("Switch to Gallery View"), &VideoDialog::SwitchGallery);
+
+    // dho
+    if (!(m_d->m_type & DLG_GALLERY2))
+        menu->AddItem(tr("Switch to Gallery2 View"), &VideoDialog::SwitchGallery2);
 
     if (!(m_d->m_type & DLG_TREE))
         menu->AddItem(tr("Switch to List View"), &VideoDialog::SwitchTree);
@@ -2826,7 +2843,7 @@ void VideoDialog::handleSelect(MythUIButtonListItem *item)
         default:
         {
             bool doPlay = true;
-            if (m_d->m_type == DLG_GALLERY)
+            if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2) // dho
             {
                 doPlay = !DoItemDetailShow();
             }
@@ -2853,6 +2870,12 @@ void VideoDialog::SwitchTree()
 void VideoDialog::SwitchGallery()
 {
     SwitchLayout(DLG_GALLERY, m_d->m_browse);
+}
+
+// dho
+void VideoDialog::SwitchGallery2()
+{
+    SwitchLayout(DLG_GALLERY2, m_d->m_browse);
 }
 
 /** \fn VideoDialog::SwitchBrowse()
@@ -3430,7 +3453,7 @@ MythUIButtonListItem *VideoDialog::GetItemByMetadata(VideoMetadata *metadata)
 
     QList<MythGenericTree*> *children = m_d->m_currentNode->getAllChildren();
 
-    for (auto * child : std::as_const(*children))
+    for (auto * child : qAsConst(*children)) // dho
     {
         int nodeInt = child->getInt();
         if (nodeInt != kSubFolder && nodeInt != kUpFolder)
@@ -3481,7 +3504,7 @@ void VideoDialog::VideoAutoSearch(MythGenericTree *node)
     LOG(VB_GENERAL, LOG_DEBUG,
         QString("Fetching details in %1").arg(node->GetText()));
 
-    for (auto * child : std::as_const(*lchildren))
+    for (auto * child : qAsConst(*lchildren)) // dho
     {
         if ((child->getInt() == kSubFolder) ||
             (child->getInt() == kUpFolder))
@@ -3782,16 +3805,16 @@ void VideoDialog::OnVideoSearchDone(MetadataLookup *lookup)
     QList<PersonInfo> actors = lookup->GetPeople(kPersonActor);
     QList<PersonInfo> gueststars = lookup->GetPeople(kPersonGuestStar);
 
-    for (const auto & name : std::as_const(gueststars))
+    for (const auto & name : qAsConst(gueststars)) // dho
         actors.append(name);
 
     VideoMetadata::cast_list cast;
     QStringList cl;
 
-    for (const auto & person : std::as_const(actors))
+    for (const auto & person : qAsConst(actors)) // dho
         cl.append(person.name);
 
-    for (const auto & name : std::as_const(cl))
+    for (const auto & name : qAsConst(cl)) // dho
     {
         QString cn = name.trimmed();
         if (!cn.isEmpty())
@@ -3806,7 +3829,7 @@ void VideoDialog::OnVideoSearchDone(MetadataLookup *lookup)
     VideoMetadata::genre_list video_genres;
     QStringList genres = lookup->GetCategories();
 
-    for (const auto & name : std::as_const(genres))
+    for (const auto & name : qAsConst(genres)) // dho
     {
         QString genre_name = name.trimmed();
         if (!genre_name.isEmpty())
@@ -3821,7 +3844,7 @@ void VideoDialog::OnVideoSearchDone(MetadataLookup *lookup)
     VideoMetadata::country_list video_countries;
     QStringList countries = lookup->GetCountries();
 
-    for (const auto & name : std::as_const(countries))
+    for (const auto & name : qAsConst(countries)) // dho
     {
         QString country_name = name.trimmed();
         if (!country_name.isEmpty())
