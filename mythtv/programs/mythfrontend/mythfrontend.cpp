@@ -1308,6 +1308,14 @@ static void TVMenuCallback([[maybe_unused]] void *data, QString &selection)
     {
         RunVideoScreen(VideoDialog::DLG_GALLERY2);
     }
+    else if (sel == "gallery3") // dho
+    {
+        RunVideoScreen(VideoDialog::DLG_GALLERY3);
+    }
+    else if (sel == "gallery4") // dho
+    {
+        RunVideoScreen(VideoDialog::DLG_GALLERY4);
+    }
     else if (sel == "disc_play")
     {
         playDisc();

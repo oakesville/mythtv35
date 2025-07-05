@@ -952,7 +952,7 @@ void VideoDialog::SavePosition(void)
         if (node)
             m_d->m_lastTreeNodePath = node->getRouteByString().join("\n");
     }
-    else if (m_d->m_type == DLG_BROWSER || m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2) // dho
+    else if (m_d->m_type == DLG_BROWSER || m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2 || m_d->m_type == DLG_GALLERY3 || m_d->m_type == DLG_GALLERY4) // dho
     {
         MythUIButtonListItem *item = m_videoButtonList->GetItemCurrent();
         if (item)
@@ -995,6 +995,12 @@ bool VideoDialog::Create()
             break;
         case DLG_GALLERY2: // dho
             windowName = "gallery2";
+            break;
+        case DLG_GALLERY3: // dho
+            windowName = "gallery3";
+            break;
+        case DLG_GALLERY4: // dho
+            windowName = "gallery4";
             break;
         case DLG_TREE:
             windowName = "tree";
@@ -1229,7 +1235,7 @@ void VideoDialog::loadData()
             {
                 QStringList lastTreeNodePath = gCoreContext->GetSetting("mythvideo.VideoTreeLastActive", "").split("\n");
 
-                if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2 || m_d->m_type == DLG_BROWSER) // dho
+                if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2 || m_d->m_type == DLG_GALLERY3 || m_d->m_type == DLG_GALLERY4 || m_d->m_type == DLG_BROWSER) // dho
                 {
                     if (!lastTreeNodePath.isEmpty())
                     {
@@ -2586,6 +2592,10 @@ MythMenu* VideoDialog::CreateViewMenu()
     // dho
     if (!(m_d->m_type & DLG_GALLERY2))
         menu->AddItem(tr("Switch to Gallery2 View"), &VideoDialog::SwitchGallery2);
+    if (!(m_d->m_type & DLG_GALLERY3))
+        menu->AddItem(tr("Switch to Gallery3 View"), &VideoDialog::SwitchGallery3);
+    if (!(m_d->m_type & DLG_GALLERY4))
+        menu->AddItem(tr("Switch to Gallery4 View"), &VideoDialog::SwitchGallery4);
 
     if (!(m_d->m_type & DLG_TREE))
         menu->AddItem(tr("Switch to List View"), &VideoDialog::SwitchTree);
@@ -2843,7 +2853,7 @@ void VideoDialog::handleSelect(MythUIButtonListItem *item)
         default:
         {
             bool doPlay = true;
-            if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2) // dho
+            if (m_d->m_type == DLG_GALLERY || m_d->m_type == DLG_GALLERY2 || m_d->m_type == DLG_GALLERY3 || m_d->m_type == DLG_GALLERY4) // dho
             {
                 doPlay = !DoItemDetailShow();
             }
@@ -2876,6 +2886,14 @@ void VideoDialog::SwitchGallery()
 void VideoDialog::SwitchGallery2()
 {
     SwitchLayout(DLG_GALLERY2, m_d->m_browse);
+}
+void VideoDialog::SwitchGallery3()
+{
+    SwitchLayout(DLG_GALLERY3, m_d->m_browse);
+}
+void VideoDialog::SwitchGallery4()
+{
+    SwitchLayout(DLG_GALLERY4, m_d->m_browse);
 }
 
 /** \fn VideoDialog::SwitchBrowse()
