@@ -954,13 +954,13 @@ void VideoListImp::buildDbList()
 
     // dho
     if (ltype == 2)
-      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'precode/%'"));
+      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'Pre-Code/%'"));
     else if (ltype == 9)
-      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'horror/%'"));
+      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'Horror/%'"));
     else if (ltype == 16)
-      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'noir/%'"));
+      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'Film Noir/%'"));
     else if (ltype == 17)
-      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'silent/%'"));
+      VideoMetadataListManager::loadAllFromDatabase(ml, QString("WHERE filename LIKE 'Silent/%'"));
     else
       VideoMetadataListManager::loadAllFromDatabase(ml);
     // VideoMetadataListManager::loadAllFromDatabase(ml);
