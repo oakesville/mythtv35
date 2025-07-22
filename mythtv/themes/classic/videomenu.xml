@@ -17,12 +17,12 @@
      <text>Horror Gallery</text>
      <action>GALLERY2</action>
    </button>
+   -->
    <button>
      <type>VIDEO_GALLERY</type>
      <text>Film Noir Gallery</text>
      <action>GALLERY3</action>
    </button>
-   -->
    <button>
      <type>VIDEO_GALLERY</type>
      <text>Silent Gallery</text>
